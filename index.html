@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#ffffff;--ink:#111111;--line:#111111;--faint:rgba(17,17,17,.14);--soft:#555555;--yellow:#ffe000;--red:#f26b5e;--grey:#cfd1d4;color-scheme:light}
+:root{--bg:#ffffff;--ink:#111111;--line:#111111;--faint:rgba(17,17,17,.14);--soft:#555555;--yellow:#ffe000;--red:#f26b5e;--grey:#cfd1d4;--brown:#c99a5b;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--ink:#f2f2f2;--line:#f2f2f2;--faint:rgba(242,242,242,.14);--soft:#b4b4b4;--grey:#6d7075;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#121212;--ink:#f2f2f2;--line:#f2f2f2;--faint:rgba(242,242,242,.14);--soft:#b4b4b4;--grey:#6d7075;color-scheme:dark}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -21,26 +21,29 @@ main{position:relative;z-index:1;min-height:100%;max-width:1040px;margin:0 auto;
 header{text-align:right;margin-bottom:clamp(28px,6vh,60px)}
 h1{margin:0;font-weight:300;font-size:clamp(2.6rem,8vw,5.2rem);line-height:.95;letter-spacing:.02em;text-transform:uppercase}
 .rule{display:inline-block;width:56px;height:2px;background:var(--ink);margin-top:18px}
-.games{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,36px);flex:1;align-content:start}
-a.game{position:relative;display:flex;flex-direction:column;color:var(--ink);text-decoration:none;border:1.5px solid var(--line);background:var(--bg);padding:22px 24px 24px;min-height:340px}
-a.game::after{content:"";position:absolute;inset:0;border:1.5px solid var(--line);transform:translate(0,0);transition:transform .2s ease;z-index:-1;background:var(--yellow)}
-a.game:hover::after,a.game:focus-visible::after{transform:translate(10px,10px)}
+.games{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--line);max-width:760px;margin-left:auto;width:100%;background:var(--bg)}
+.games li{border-bottom:1.5px solid var(--line)}
+a.game{isolation:isolate;display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:20px;padding:18px 6px;color:var(--ink);text-decoration:none;position:relative}
+a.game::before{content:"";position:absolute;inset:0;background:var(--yellow);transform:scaleX(0);transform-origin:left;transition:transform .22s ease;z-index:-1}
+a.game:hover::before,a.game:focus-visible::before{transform:scaleX(1)}
+a.game:hover,a.game:focus-visible{color:#111}
+a.game:hover .icon .s,a.game:focus-visible .icon .s{stroke:#111}
 a.game:focus-visible{outline:none}
-.art{width:100%;height:auto;flex:1;max-height:220px;display:block;margin:4px 0 18px}
-.art .s{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.art .t{fill:none;stroke:var(--line);stroke-width:1.2}
-h2{margin:0;font-weight:300;font-size:clamp(1.8rem,3.4vw,2.4rem);letter-spacing:.06em;text-transform:uppercase;line-height:1}
-.desc{margin:10px 0 18px;color:var(--soft);font-size:.98rem;line-height:1.55;max-width:34ch}
-.play{margin-top:auto;font-weight:500;font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px}
-.play i{display:inline-block;width:34px;height:2px;background:var(--ink);transition:width .2s ease}
-a.game:hover .play i{width:54px}
-@media (max-width:700px){
-  .games{grid-template-columns:1fr}
-  a.game{min-height:0}
-  .art{max-height:150px}
+.icon{width:72px;height:72px;display:block}
+.icon .s{fill:none;stroke:var(--line);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+h2{margin:0;font-weight:300;font-size:clamp(1.3rem,2.6vw,1.75rem);letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
+.desc{margin:4px 0 0;color:var(--soft);font-size:.92rem;line-height:1.45}
+a.game:hover .desc,a.game:focus-visible .desc{color:#333}
+.play{font-weight:500;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px;padding-right:6px}
+.play i{display:inline-block;width:28px;height:2px;background:currentColor;transition:width .2s ease}
+a.game:hover .play i{width:44px}
+@media (max-width:620px){
+  a.game{grid-template-columns:52px 1fr;gap:14px;padding:14px 4px}
+  .icon{width:52px;height:52px}
+  .play{display:none}
   header{text-align:left}
 }
-@media (prefers-reduced-motion:reduce){a.game::after,.play i{transition:none}}
+@media (prefers-reduced-motion:reduce){a.game::before,.play i{transition:none}}
 </style>
 </head>
 <body>
@@ -57,39 +60,33 @@ a.game:hover .play i{width:54px}
     <h1>Pick a game</h1>
     <span class="rule" aria-hidden="true"></span>
   </header>
-  <div class="games">
-    <a class="game" href="bug-hunt.html">
-      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Line drawing of a bug">
-        <path class="t" d="M20 170H300M60 30V185M260 20V185"/>
-        <path d="M160 64 A44 58 0 0 0 160 180 Z" fill="var(--red)" opacity=".8"/>
-        <ellipse class="s" cx="160" cy="122" rx="44" ry="58"/>
-        <path class="s" d="M160 64V180"/>
-        <circle class="s" cx="160" cy="50" r="16"/>
-        <path class="s" d="M152 36C146 22 136 16 124 16M168 36C174 22 184 16 196 16"/>
-        <path class="s" d="M118 98L86 82M116 124H80M120 150L88 168M202 98L234 82M204 124H240M200 150L232 168"/>
-        <circle class="s" cx="182" cy="106" r="5"/><circle class="s" cx="180" cy="148" r="5"/>
+  <ul class="games">
+    <li><a class="game" href="bug-hunt.html">
+      <svg class="icon" viewBox="0 0 72 72" role="img" aria-label="Bug icon">
+        <path d="M36 24 A15 20 0 0 0 36 64 Z" fill="var(--red)" opacity=".8"/>
+        <g class="s"><ellipse cx="36" cy="44" rx="15" ry="20"/><path d="M36 24V64"/><circle cx="36" cy="17" r="6"/><path d="M33 12c-2-5-6-7-10-7M39 12c2-5 6-7 10-7M21 37l-10-5M21 46H10M22 55l-10 6M51 37l10-5M51 46h11M50 55l10 6"/></g>
       </svg>
-      <h2>Bug Hunt</h2>
-      <p class="desc">Dig for hidden bugs. Solve each equation to find how many are nearby, then net them all.</p>
+      <div><h2>Bug Hunt</h2><p class="desc">Solve equations to count the hidden bugs, then net them all.</p></div>
       <span class="play">Play <i></i></span>
-    </a>
-    <a class="game" href="brick-quest.html">
-      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Line drawing of a building brick">
-        <path class="t" d="M20 176H300M44 20V190M282 30V190"/>
-        <!-- side face shaded -->
-        <path d="M232 92 L232 142 L160 180 L160 130 Z" fill="var(--grey)"/>
-        <!-- brick outline: top, front, side -->
-        <path class="s" d="M88 92 L160 54 L232 92 L160 130 Z"/>
-        <path class="s" d="M88 92 V142 L160 180 L232 142 V92"/>
-        <path class="s" d="M160 130 V180"/>
-        <!-- studs -->
-        <g class="s" style="fill:var(--bg)"><path d="M160 64 V54 A10 5.4 0 0 1 180 54 V64 A10 5.4 0 0 1 160 64 Z"/><ellipse cx="170" cy="54" rx="10" ry="5.4"/><path d="M124 82 V72 A10 5.4 0 0 1 144 72 V82 A10 5.4 0 0 1 124 82 Z"/><ellipse cx="134" cy="72" rx="10" ry="5.4"/><path d="M176 83 V73 A10 5.4 0 0 1 196 73 V83 A10 5.4 0 0 1 176 83 Z"/><ellipse cx="186" cy="73" rx="10" ry="5.4"/><path d="M140 101 V91 A10 5.4 0 0 1 160 91 V101 A10 5.4 0 0 1 140 101 Z"/><ellipse cx="150" cy="91" rx="10" ry="5.4"/></g>
+    </a></li>
+    <li><a class="game" href="brick-quest.html">
+      <svg class="icon" viewBox="0 0 72 72" role="img" aria-label="Brick icon">
+        <path d="M60 34 V48 L36 61 V47 Z" fill="var(--grey)"/>
+        <g class="s"><path d="M12 34 L36 21 L60 34 L36 47 Z"/><path d="M12 34 V48 L36 61 L60 48 V34"/><path d="M36 47 V61"/>
+          <path d="M22 35 v-5 a6 3.2 0 0 1 12 0 v5 a6 3.2 0 0 1 -12 0 Z" style="fill:var(--bg)"/><ellipse cx="28" cy="30" rx="6" ry="3.2" style="fill:var(--bg)"/><path d="M38 35 v-5 a6 3.2 0 0 1 12 0 v5 a6 3.2 0 0 1 -12 0 Z" style="fill:var(--bg)"/><ellipse cx="44" cy="30" rx="6" ry="3.2" style="fill:var(--bg)"/></g>
       </svg>
-      <h2>Brick Quest</h2>
-      <p class="desc">Guide Cheryl through nine maze rooms. Step on move plates to solve equations and open the exit.</p>
+      <div><h2>Brick Quest</h2><p class="desc">Guide Cheryl through nine maze rooms by solving equations.</p></div>
       <span class="play">Play <i></i></span>
-    </a>
-  </div>
+    </a></li>
+    <li><a class="game" href="deep-trouble.html">
+      <svg class="icon" viewBox="0 0 72 72" role="img" aria-label="Pickaxe icon">
+        <path d="M30 10 Q57 9 64 36 Q53 20 30 10 Z" fill="var(--brown)" opacity=".85"/>
+        <g class="s"><path d="M30 10 Q57 9 64 36 Q53 20 30 10 Z"/><path d="M47 22 L14 63"/></g>
+      </svg>
+      <div><h2>Deep Trouble</h2><p class="desc">Keep six trapped miners alive at −640 m using negative numbers, rounding and estimation.</p></div>
+      <span class="play">Play <i></i></span>
+    </a></li>
+  </ul>
 </main>
 </body>
 </html>
