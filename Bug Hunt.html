@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bug Hunt: Topic 4 Equations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dfe7f1;--ink:#16243a;--soft:#4c5d76;--panel:#ffffff;--frame:#2f4a6b;--hid:#8fb3d9;--hidL:#c4dbf2;--hidD:#5a80ab;--open:#f3f6fa;--grid:#cbd6e3;--pend:#ffd166;--pendD:#c99a1f;--ok:#2e9e6a;--bad:#d64545;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17202e;--ink:#e8eef6;--soft:#9fb0c6;--panel:#223047;--frame:#0e1726;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17202e;--ink:#e8eef6;--soft:#9fb0c6;--panel:#223047;--frame:#0e1726;color-scheme:dark}
+:root{box-sizing:border-box;height:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Lexend","Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.35}
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:10px;padding:10px 12px;max-width:1300px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h1{margin:0 auto 0 0;font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;line-height:1.1}
+h1 small{display:block;font-size:.78rem;font-weight:400;color:var(--soft)}
+h1 svg{width:30px;height:30px;flex:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.seg{display:flex;background:var(--panel);border-radius:8px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 10px;border-radius:6px;font-size:.88rem}
+.seg button[aria-pressed="true"]{background:var(--frame);color:#fff}
+.stat{display:flex;flex-direction:column;align-items:center;background:var(--frame);color:#fff;border-radius:8px;padding:3px 12px;min-width:66px}
+.stat span{font-size:.68rem;opacity:.8}
+.stat b{font-size:1.15rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.btn{border:0;background:var(--pend);color:#16243a;font-weight:500;padding:8px 14px;border-radius:8px;box-shadow:inset 0 -3px 0 var(--pendD)}
+.btn:active{box-shadow:none;transform:translateY(1px)}
+button:focus-visible{outline:3px solid #3b82f6;outline-offset:2px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;min-height:0}
+.boardbox{min-height:0;min-width:0;display:flex;align-items:center;justify-content:center}
+#grid{display:grid;background:var(--frame);padding:6px;border-radius:10px;gap:0;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.c{width:var(--cs);height:var(--cs);border:0;padding:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:calc(var(--cs)*.56);line-height:1;
+  background:var(--hid);box-shadow:inset 2px 2px 0 var(--hidL),inset -2px -2px 0 var(--hidD);color:#16243a;position:relative}
+.c:hover{filter:brightness(1.06)}
+.c.open{background:var(--open);box-shadow:inset 0 0 0 .5px var(--grid);cursor:default;filter:none}
+.c.pend{background:var(--pend);box-shadow:inset 0 0 0 .5px var(--grid),inset 0 -3px 0 var(--pendD);cursor:pointer}
+.c.pend::after{content:"?";color:#5a3d00;font-size:calc(var(--cs)*.5)}
+.c.sel{outline:3px solid #2563eb;outline-offset:-3px;z-index:1}
+.c.boom{background:var(--bad)}
+.c svg{width:72%;height:72%}
+.n1{color:#0e8a83}.n2{color:#7a3db8}.n3{color:#d4691b}.n4{color:#23407a}.n5{color:#b0123a}.n6{color:#5f7110}.n7{color:#16243a}.n8{color:#6b7280}
+.panel{display:flex;flex-direction:column;gap:10px;min-height:0}
+.card{background:var(--panel);border-radius:10px;padding:12px 14px}
+.mode{display:flex;gap:6px}
+.mode button{flex:1;border:2px solid var(--grid);background:var(--panel);border-radius:8px;padding:7px 6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.92rem}
+.mode button svg{width:20px;height:20px}
+.mode button[aria-pressed="true"]{border-color:var(--frame);background:var(--frame);color:#fff}
+.tag{font-size:.82rem;color:var(--soft);min-height:1.2em}
+.eq{font-size:1.55rem;font-weight:500;margin:6px 0 2px;min-height:1.4em;text-align:center}
+.ask{font-size:.88rem;color:var(--soft);text-align:center;min-height:1.2em}
+.keys{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
+.keys button{border:0;border-radius:7px;background:var(--hid);box-shadow:inset 0 -3px 0 var(--hidD);color:#16243a;font-weight:700;font-size:1.1rem;padding:9px 0}
+.keys button:disabled{opacity:.35;cursor:default}
+.keys button.wrong{background:var(--bad);color:#fff;box-shadow:none}
+.msg{font-size:.92rem;min-height:2.6em}
+.msg.bad{color:var(--bad)}.msg.good{color:var(--ok)}
+.work{font-size:.88rem;color:var(--soft);margin-top:4px}
+.work div{margin:1px 0}
+.foot{display:flex;justify-content:space-between;font-size:.85rem;color:var(--soft)}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(12,20,34,.6);padding:14px;z-index:9}
+.ov.on{display:flex}
+.box{background:var(--panel);border-radius:12px;padding:18px 20px;max-width:460px;width:100%;max-height:100%;overflow:auto}
+.box h2{margin:0 0 8px;font-size:1.3rem}
+.box p{margin:0 0 8px}
+.box ul{margin:0 0 10px;padding-left:1.2em}.box li{margin:3px 0}
+@media (max-width:820px),(max-aspect-ratio:1/1){
+  .app{padding:8px;gap:8px}
+  header{gap:6px}
+  h1{font-size:1.05rem}h1 small{display:none}
+  .stat{min-width:54px;padding:2px 8px}.stat b{font-size:1rem}
+  main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:8px}
+  .panel{gap:6px}
+  .card{padding:8px 10px}
+  .eq{font-size:1.25rem;margin:2px 0}
+  .msg{min-height:1.3em;font-size:.85rem}
+  .work{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:2px}
+  .keys button{padding:7px 0}
+  .hidesm{display:none}
+}
+@media (max-width:430px){.seg button{padding:5px 7px;font-size:.8rem}.btn{padding:7px 10px}}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bug" viewBox="0 0 24 24"><g stroke="#16243a" stroke-width="1.6" stroke-linecap="round"><path d="M5 9 2 7M19 9l3-2M4 13H1M20 13h3M5 17l-3 2M19 17l3 2M9 4 7 2M15 4l2-2"/></g><ellipse cx="12" cy="14" rx="6.5" ry="7.5" fill="#d13b2f" stroke="#16243a" stroke-width="1.4"/><circle cx="12" cy="6.5" r="3.4" fill="#16243a"/><path d="M12 7v14" stroke="#16243a" stroke-width="1.3"/><circle cx="9" cy="12" r="1.3" fill="#16243a"/><circle cx="15" cy="16" r="1.3" fill="#16243a"/><circle cx="10.6" cy="5.8" r=".8" fill="#fff"/><circle cx="13.4" cy="5.8" r=".8" fill="#fff"/></symbol>
+  <symbol id="net" viewBox="0 0 24 24"><path d="M15 15 22 22" stroke="#7a4a12" stroke-width="2.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.5" fill="#d9f2e3" stroke="#1d7f4f" stroke-width="2"/><path d="M4 7.5h12M3 11h14M4.5 14.5h11M7 3.5v13M10 2.5v15M13 3.5v13" stroke="#1d7f4f" stroke-width="1"/></symbol>
+  <symbol id="dig" viewBox="0 0 24 24"><path d="M12 3v11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M7 13h10l-1.5 7.5h-7z" fill="currentColor"/></symbol>
+</svg>
+<div class="app">
+<header>
+  <h1><svg aria-hidden="true"><use href="#bug"/></svg><span>Bug Hunt<small>Topic 4: solve to reveal</small></span></h1>
+  <div class="seg" role="group" aria-label="Difficulty">
+    <button data-lv="0" aria-pressed="true">Easy</button><button data-lv="1" aria-pressed="false">Medium</button><button data-lv="2" aria-pressed="false">Hard</button>
+  </div>
+  <div class="stat"><span>Bugs left</span><b id="left">0</b></div>
+  <div class="stat"><span>Time</span><b id="time">0</b></div>
+  <button class="btn" id="new">New game</button>
+</header>
+<main>
+  <div class="boardbox" id="boardbox"><div id="grid" role="grid" aria-label="Bug field"></div></div>
+  <aside class="panel">
+    <div class="mode" role="group" aria-label="Tap mode">
+      <button id="mDig" aria-pressed="true"><svg aria-hidden="true"><use href="#dig"/></svg>Dig</button>
+      <button id="mNet" aria-pressed="false"><svg aria-hidden="true"><use href="#net"/></svg>Net a bug</button>
+    </div>
+    <div class="card">
+      <div class="tag" id="tag">Dig any square to start. Your first dig is always safe.</div>
+      <div class="eq" id="eq"></div>
+      <div class="ask" id="ask"></div>
+    </div>
+    <div class="keys" id="keys" aria-label="Answer"></div>
+    <div class="card"><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="work" id="work"></div></div>
+    <div class="foot"><span id="prog">Solved 0 of 0</span><span class="hidesm">Right-click or long-press to net</span></div>
+  </aside>
+</main>
+</div>
+<div class="ov" id="ov"><div class="box" id="box" role="dialog" aria-modal="true"></div></div>
+
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var LV=[{name:"Easy",r:9,c:9,b:10},{name:"Medium",r:12,c:12,b:22},{name:"Hard",r:14,c:16,b:40}];
+var lv=0,S=null,timer=null,mode="dig";
+var M="\u2212";
+function ri(a,b){return a+Math.floor(Math.random()*(b-a+1))}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function sg(n){return n<0?M+(-n):String(n)}
+function term(a,v){v=v||"x";return a===1?v:a===-1?M+v:sg(a)+v}
+function plus(b){return b===0?"":(b<0?" "+M+" "+(-b):" + "+b)}
+function lin(a,b){return term(a)+plus(b)}
+
+/* ---------- equation makers: every answer is n, the number of bugs nearby ---------- */
+var MAKERS={
+ add:function(n){var a=ri(1,9);return {eq:"x + "+a+" = "+(n+a),ref:"Part 2, Example 2.1 (a)",steps:["x = "+(n+a)+" "+M+" "+a,"x = "+n]}},
+ sub:function(n){var a=ri(1,9);return {eq:"x "+M+" "+a+" = "+sg(n-a),ref:"Part 2, Example 2.1 (b)",steps:["x = "+sg(n-a)+" + "+a,"x = "+n]}},
+ mul:function(n){var a=ri(2,7);return {eq:a+"x = "+(a*n),ref:"Part 2, Example 2.1 (c)",steps:["x = "+(a*n)+" ÷ "+a,"x = "+n]}},
+ two:function(n){var a=pick([2,3,4,5,-2,-3,-4,-5]),b=pick([-9,-7,-5,-3,-1,1,2,4,6,8]),c=a*n+b;
+   return {eq:lin(a,b)+" = "+sg(c),ref:"Part 2, Example 2.1 (e) and (f)",steps:[term(a)+" = "+sg(c)+(b<0?" + "+(-b):" "+M+" "+b),term(a)+" = "+sg(a*n),"x = "+sg(a*n)+" ÷ "+(a<0?"("+sg(a)+")":a),"x = "+n]}},
+ both:function(n){var a,c;do{a=ri(2,8);c=ri(1,7)}while(a===c);var b=ri(-9,9),d=(a-c)*n+b;
+   var k=a-c;return {eq:lin(a,b)+" = "+lin(c,d),ref:"Part 2, Example 2.2",steps:[term(a)+" "+M+" "+term(c)+plus(b)+" = "+sg(d),term(k)+plus(b)+" = "+sg(d),term(k)+" = "+sg(d-b),"x = "+n]}},
+ brk:function(n){var a=ri(2,5),b=pick([-4,-3,-2,-1,1,2,3,4,5]),c=a*(n+b);
+   return {eq:a+"(x"+plus(b)+") = "+sg(c),ref:"Part 2, Example 2.3",steps:[a+"x"+plus(a*b)+" = "+sg(c),a+"x = "+sg(c-a*b),"x = "+n]}},
+ brk2:function(n){for(var t=0;t<200;t++){var a=ri(2,5),c=ri(2,5);if(a===c)continue;var b=ri(-4,5);var num=a*(n+b);if(num%c)continue;var d=num/c-n;if(d===0||b===0||Math.abs(d)>9)continue;
+   return {eq:a+"(x"+plus(b)+") = "+c+"(x"+plus(d)+")",ref:"Part 2, Example 2.3 (d)",steps:[a+"x"+plus(a*b)+" = "+c+"x"+plus(c*d),term(a-c)+" = "+sg(c*d-a*b),"x = "+n]}}
+   return MAKERS.both(n)},
+ frac:function(n){var b=ri(2,5),c=Math.ceil((n+1)/b)+ri(0,2),a=b*c-n;
+   return {eq:"(x + "+a+")/"+b+" = "+c,ref:"Part 3, Example 3.1 (a)",steps:["x + "+a+" = "+(b*c)+"   (multiply both sides by "+b+")","x = "+n]}},
+ frac2:function(n){for(var t=0;t<300;t++){var p=ri(2,5),q=ri(2,5);if(p===q)continue;var a=ri(-6,6);var top=q*(n+a);if(top%p)continue;var b=top/p-n;if(a===0||b===0||Math.abs(b)>12)continue;
+   return {eq:"(x"+plus(a)+")/"+p+" = (x"+plus(b)+")/"+q,ref:"Part 3, Example 3.2 (b)",steps:[q+"(x"+plus(a)+") = "+p+"(x"+plus(b)+")   (multiply both sides by "+(p*q)+")",q+"x"+plus(q*a)+" = "+p+"x"+plus(p*b),"x = "+n]}}
+   return MAKERS.frac(n)},
+ ineq:function(n){var a=ri(2,6),b=ri(-9,9);var neg=Math.random()<.5;
+   if(!neg){var r=a*(n-1)+b;return {eq:lin(a,b)+" > "+sg(r),ask:"What is the smallest integer x that satisfies this?",ref:"Part 6, Example 6.1",steps:[term(a)+" > "+sg(r-b),"x > "+sg(n-1),"Smallest integer: "+n]}}
+   var r2=-a*(n-1)+b;return {eq:lin(-a,b)+" < "+sg(r2),ask:"What is the smallest integer x that satisfies this?",ref:"Part 6, Example 6.1",steps:[term(-a)+" < "+sg(r2-b),"x > "+sg(n-1)+"   (divide by "+sg(-a)+", so the sign flips)","Smallest integer: "+n]}}
+};
+var MIX=[["add","sub","mul","two"],["two","both","brk","frac"],["both","brk2","frac2","ineq"]];
+
+/* ---------- board ---------- */
+function newGame(){
+  clearInterval(timer);timer=null;
+  var L=LV[lv],cells=[];
+  for(var i=0;i<L.r*L.c;i++)cells.push({bug:false,n:0,st:"hid",eq:null,wrong:{}});
+  S={L:L,cells:cells,started:false,over:false,t:0,flags:0,sel:-1,solved:0,pend:0};
+  var g=$("grid");g.style.gridTemplateColumns="repeat("+L.c+",var(--cs))";
+  var h="";for(var k=0;k<cells.length;k++)h+='<button class="c" data-i="'+k+'" aria-label="Hidden square"></button>';
+  g.innerHTML=h;
+  fit();stats();showEq(-1);
+  $("msg").textContent="";$("msg").className="msg";$("work").innerHTML="";
+  $("tag").textContent="Dig any square to start. Your first dig is always safe.";
+}
+function idx(r,c){return r*S.L.c+c}
+function nb(i){var r=Math.floor(i/S.L.c),c=i%S.L.c,o=[];for(var dr=-1;dr<=1;dr++)for(var dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;var R=r+dr,C=c+dc;if(R>=0&&C>=0&&R<S.L.r&&C<S.L.c)o.push(idx(R,C))}return o}
+function plant(safe){
+  var ban={};ban[safe]=1;nb(safe).forEach(function(j){ban[j]=1});
+  var free=[];for(var k=0;k<S.cells.length;k++)if(!ban[k])free.push(k);
+  for(var b=0;b<S.L.b;b++){var j=free.splice(Math.floor(Math.random()*free.length),1)[0];S.cells[j].bug=true}
+  S.cells.forEach(function(c,k){c.n=nb(k).filter(function(j){return S.cells[j].bug}).length});
+  S.started=true;timer=setInterval(function(){S.t++;stats()},1000);
+}
+function el(i){return $("grid").children[i]}
+function paint(i){
+  var c=S.cells[i],e=el(i);e.className="c";e.innerHTML="";
+  if(c.st==="flag"){e.innerHTML='<svg aria-hidden="true"><use href="#net"/></svg>';e.setAttribute("aria-label","Netted square")}
+  else if(c.st==="hid"){e.setAttribute("aria-label","Hidden square")}
+  else if(c.st==="bug"){e.classList.add("open");if(c.boom)e.classList.add("boom");e.innerHTML='<svg aria-hidden="true"><use href="#bug"/></svg>';e.setAttribute("aria-label","Bug")}
+  else if(c.st==="pend"){e.classList.add("open","pend");e.setAttribute("aria-label","Unsolved square: solve its equation")}
+  else {e.classList.add("open");if(c.n){e.textContent=c.n;e.classList.add("n"+c.n)}e.setAttribute("aria-label",c.n?c.n+" bugs nearby":"No bugs nearby")}
+  if(i===S.sel)e.classList.add("sel");
+}
+function open(i){
+  var c=S.cells[i];if(c.st!=="hid")return;
+  if(c.bug){lose(i);return}
+  var stack=[i];
+  while(stack.length){var k=stack.pop(),d=S.cells[k];if(d.st!=="hid")continue;
+    if(d.n===0){d.st="open";paint(k);nb(k).forEach(function(j){if(S.cells[j].st==="hid"&&!S.cells[j].bug)stack.push(j)})}
+    else{d.st="pend";d.eq=MAKERS[pick(MIX[lv])](d.n);S.pend++;paint(k)}}
+}
+function dig(i){
+  if(S.over)return;var c=S.cells[i];
+  if(!S.started)plant(i);
+  if(c.st==="hid"){open(i);if(!S.over){if(S.cells[i].st==="pend")select(i);else if(S.sel<0)nextPend()}}
+  else if(c.st==="pend")select(i);
+  else if(c.st==="open"&&c.n){ /* chord on a solved number */
+    var f=nb(i).filter(function(j){return S.cells[j].st==="flag"}).length;
+    if(f===c.n){nb(i).forEach(function(j){if(!S.over)open(j)});if(S.sel<0&&!S.over)nextPend()}
+  }
+  stats();check();
+}
+function flag(i){
+  if(S.over)return;var c=S.cells[i];
+  if(c.st==="hid"){c.st="flag";S.flags++}else if(c.st==="flag"){c.st="hid";S.flags--}else return;
+  paint(i);stats();
+}
+function select(i){var old=S.sel;S.sel=i;if(old>=0)paint(old);if(i>=0)paint(i);showEq(i)}
+function nextPend(){
+  var best=-1,bd=1e9,ref=S.sel>=0?S.sel:0,rr=Math.floor(ref/S.L.c),rc=ref%S.L.c;
+  S.cells.forEach(function(c,k){if(c.st==="pend"){var d=Math.abs(Math.floor(k/S.L.c)-rr)+Math.abs(k%S.L.c-rc);if(d<bd){bd=d;best=k}}});
+  select(best);
+}
+function showEq(i){
+  var keys=$("keys");
+  if(i<0||S.cells[i].st!=="pend"){$("eq").textContent="";$("ask").textContent="";
+    if(S&&S.started&&!S.over)$("tag").textContent=S.solved<S.pend?"Tap a yellow ? square to solve it.":"Keep digging. Net the squares you think hide bugs.";
+    keys.innerHTML=[0,1,2,3,4,5,6,7,8].map(function(n){return '<button disabled>'+n+'</button>'}).join("");return}
+  var c=S.cells[i];
+  $("tag").textContent="Notes: "+c.eq.ref;
+  $("eq").textContent=c.eq.eq.replace(/-/g,M);
+  $("ask").textContent=c.eq.ask||"Solve for x. That’s how many bugs touch this square.";
+  keys.innerHTML=[0,1,2,3,4,5,6,7,8].map(function(n){return '<button data-n="'+n+'"'+(c.wrong[n]?' class="wrong" disabled':'')+' aria-label="Answer '+n+'">'+n+'</button>'}).join("");
+  keys.querySelectorAll("[data-n]").forEach(function(b){b.onclick=function(){answer(+b.dataset.n)}});
+  $("work").innerHTML="";
+}
+function answer(n){
+  var i=S.sel;if(i<0||S.over)return;var c=S.cells[i];if(c.st!=="pend"||c.wrong[n])return;
+  var m=$("msg");
+  if(n===c.n){c.st="open";S.solved++;paint(i);m.className="msg good";m.textContent="✓ x = "+n+". "+(n===1?"1 bug touches":n+" bugs touch")+" that square.";$("work").innerHTML="";
+    S.sel=-1;nextPend();stats();check();}
+  else{c.wrong[n]=1;S.t+=10;stats();m.className="msg bad";m.textContent="✗ Not "+n+". 10 seconds added. Check the working below.";
+    showEq(i);
+    $("work").innerHTML=c.eq.steps.slice(0,-1).map(function(s){return '<div>'+s.replace(/-/g,M)+'</div>'}).join("")+'<div>…</div>'}
+}
+function stats(){
+  $("left").textContent=S.L.b-S.flags;$("time").textContent=S.t;
+  $("prog").textContent="Solved "+S.solved+" of "+S.pend;
+}
+function lose(i){
+  S.over=true;clearInterval(timer);S.cells[i].boom=true;
+  S.cells.forEach(function(c,k){if(c.bug&&c.st!=="flag"){c.st="bug";paint(k)}});
+  select(-1);
+  overlay("A bug got out!","<p>That square hid a bug. Solved equations: "+S.solved+".</p><p>Tip: solve the yellow squares first. Each answer tells you how many bugs touch that square.</p>");
+}
+function check(){
+  if(S.over||!S.started)return;
+  var safeLeft=S.cells.some(function(c){return !c.bug&&(c.st==="hid"||c.st==="flag"||c.st==="pend")});
+  if(safeLeft)return;
+  S.over=true;clearInterval(timer);
+  S.cells.forEach(function(c,k){if(c.bug&&c.st!=="flag"){c.st="flag";paint(k)}});S.flags=S.L.b;stats();
+  overlay("All bugs found!","<p>"+S.L.name+" cleared in "+S.t+" seconds, with "+S.solved+" equations solved.</p>");
+}
+function overlay(t,html){
+  $("box").innerHTML="<h2>"+t+"</h2>"+html+'<div style="display:flex;gap:8px;margin-top:10px"><button class="btn" id="again">Play again</button></div>';
+  $("ov").classList.add("on");$("again").focus();$("again").onclick=function(){$("ov").classList.remove("on");newGame()};
+}
+function intro(){
+  $("box").innerHTML='<h2>Bug Hunt</h2><p>Bugs are hiding under the blue squares. Clear every safe square without digging up a bug.</p><ul>'+
+  '<li><b>Dig</b> a square. If no bugs touch it, the area opens up.</li>'+
+  '<li>A yellow <b>?</b> square hides a number from 0 to 8. Solve its equation to reveal how many bugs touch it.</li>'+
+  '<li>Wrong answers add 10 seconds and show the working.</li>'+
+  '<li><b>Net</b> a square you think hides a bug: right-click, long-press, or switch to Net mode.</li>'+
+  '<li>Tap a solved number with the right number of nets around it to dig all its other neighbours.</li></ul>'+
+  '<p>Easy uses Part 2 one-step and two-step equations. Medium adds both sides, brackets and fractions. Hard adds harder fractions and inequalities from Parts 3 and 6.</p>'+
+  '<div style="display:flex;gap:8px"><button class="btn" id="go">Start hunting</button></div>';
+  $("ov").classList.add("on");$("go").focus();$("go").onclick=function(){$("ov").classList.remove("on")};
+}
+
+/* ---------- fit the grid into the space ---------- */
+function fit(){
+  if(!S)return;var bx=$("boardbox"),w=bx.clientWidth-16,h=bx.clientHeight-16;
+  var port=matchMedia("(max-width:820px),(max-aspect-ratio:1/1)").matches;
+  if(port)h=Math.min(h,window.innerHeight-330);
+  var cs=Math.floor(Math.min(w/S.L.c,h/S.L.r,44));cs=Math.max(cs,16);
+  document.documentElement.style.setProperty("--cs",cs+"px");
+}
+window.addEventListener("resize",fit);if(window.ResizeObserver)new ResizeObserver(fit).observe($("boardbox"));
+
+/* ---------- input ---------- */
+var g=$("grid"),press=null,longed=false;
+g.addEventListener("click",function(e){var b=e.target.closest(".c");if(!b)return;if(longed){longed=false;return}var i=+b.dataset.i;mode==="net"&&S.cells[i].st!=="pend"&&S.cells[i].st!=="open"?flag(i):dig(i)});
+g.addEventListener("contextmenu",function(e){var b=e.target.closest(".c");if(!b)return;e.preventDefault();flag(+b.dataset.i)});
+g.addEventListener("pointerdown",function(e){if(e.pointerType!=="touch")return;var b=e.target.closest(".c");if(!b)return;longed=false;
+  clearTimeout(press);press=setTimeout(function(){longed=true;flag(+b.dataset.i);if(navigator.vibrate)navigator.vibrate(20)},430)});
+["pointerup","pointercancel","pointerleave"].forEach(function(ev){g.addEventListener(ev,function(){clearTimeout(press)})});
+document.addEventListener("keydown",function(e){if($("ov").classList.contains("on"))return;var n=parseInt(e.key,10);if(n>=0&&n<=8&&S.sel>=0){answer(n)}});
+function setMode(m){mode=m;$("mDig").setAttribute("aria-pressed",m==="dig");$("mNet").setAttribute("aria-pressed",m==="net")}
+$("mDig").onclick=function(){setMode("dig")};$("mNet").onclick=function(){setMode("net")};
+document.querySelectorAll(".seg button").forEach(function(b){b.onclick=function(){lv=+b.dataset.lv;document.querySelectorAll(".seg button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});newGame()}});
+$("new").onclick=newGame;
+
+newGame();intro();
+})();
+</script>
+</body>
+</html>
