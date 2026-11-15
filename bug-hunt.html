@@ -50,6 +50,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;min-height:
 .mode button svg{width:20px;height:20px}
 .mode button[aria-pressed="true"]{border-color:var(--frame);background:var(--frame);color:#fff}
 .tag{font-size:.82rem;color:var(--soft);min-height:1.2em}
+.tag:empty{display:none}
 .eq{font-size:1.55rem;font-weight:500;margin:6px 0 2px;min-height:1.4em;text-align:center}
 .ask{font-size:.88rem;color:var(--soft);text-align:center;min-height:1.2em}
 .keys{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
@@ -213,7 +214,7 @@ function dig(i){
 function flag(i){
   if(S.over)return;var c=S.cells[i];
   if(c.st==="hid"){c.st="flag";S.flags++}else if(c.st==="flag"){c.st="hid";S.flags--}else return;
-  paint(i);stats();
+  paint(i);stats();check();
 }
 function select(i){var old=S.sel;S.sel=i;if(old>=0)paint(old);if(i>=0)paint(i);showEq(i)}
 function nextPend(){
@@ -227,7 +228,7 @@ function showEq(i){
     if(S&&S.started&&!S.over)$("tag").textContent=S.solved<S.pend?"Tap a yellow ? square to solve it.":"Keep digging. Net the squares you think hide bugs.";
     keys.innerHTML=[0,1,2,3,4,5,6,7,8].map(function(n){return '<button disabled>'+n+'</button>'}).join("");return}
   var c=S.cells[i];
-  $("tag").textContent="Notes: "+c.eq.ref;
+  $("tag").textContent="";
   $("eq").textContent=c.eq.eq.replace(/-/g,M);
   $("ask").textContent=c.eq.ask||"Solve for x. That’s how many bugs touch this square.";
   keys.innerHTML=[0,1,2,3,4,5,6,7,8].map(function(n){return '<button data-n="'+n+'"'+(c.wrong[n]?' class="wrong" disabled':'')+' aria-label="Answer '+n+'">'+n+'</button>'}).join("");
@@ -255,24 +256,25 @@ function lose(i){
 }
 function check(){
   if(S.over||!S.started)return;
-  var safeLeft=S.cells.some(function(c){return !c.bug&&(c.st==="hid"||c.st==="flag"||c.st==="pend")});
-  if(safeLeft)return;
-  S.over=true;clearInterval(timer);
+  var allNet=S.cells.every(function(c){return c.bug?c.st==="flag":c.st!=="flag"});
+  var safeLeft=S.cells.some(function(c){return !c.bug&&(c.st==="hid"||c.st==="flag")});
+  if(!allNet&&safeLeft)return;
+  S.over=true;clearInterval(timer);select(-1);
   S.cells.forEach(function(c,k){if(c.bug&&c.st!=="flag"){c.st="flag";paint(k)}});S.flags=S.L.b;stats();
-  overlay("All bugs found!","<p>"+S.L.name+" cleared in "+S.t+" seconds, with "+S.solved+" equations solved.</p>");
+  overlay("All bugs found!","<p>"+(allNet?"You netted all "+S.L.b+" bugs correctly. ":"")+S.L.name+" cleared in "+S.t+" seconds, with "+S.solved+" equation"+(S.solved===1?"":"s")+" solved.</p>");
 }
 function overlay(t,html){
   $("box").innerHTML="<h2>"+t+"</h2>"+html+'<div style="display:flex;gap:8px;margin-top:10px"><button class="btn" id="again">Play again</button></div>';
   $("ov").classList.add("on");$("again").focus();$("again").onclick=function(){$("ov").classList.remove("on");newGame()};
 }
 function intro(){
-  $("box").innerHTML='<h2>Bug Hunt</h2><p>Bugs are hiding under the blue squares. Clear every safe square without digging up a bug.</p><ul>'+
+  $("box").innerHTML='<h2>Bug Hunt</h2><p>Bugs are hiding under the blue squares. Win by netting every bug correctly, or by digging every safe square. You don’t have to solve every ? square.</p><ul>'+
   '<li><b>Dig</b> a square. If no bugs touch it, the area opens up.</li>'+
   '<li>A yellow <b>?</b> square hides a number from 0 to 8. Solve its equation to reveal how many bugs touch it.</li>'+
   '<li>Wrong answers add 10 seconds and show the working.</li>'+
   '<li><b>Net</b> a square you think hides a bug: right-click, long-press, or switch to Net mode.</li>'+
   '<li>Tap a solved number with the right number of nets around it to dig all its other neighbours.</li></ul>'+
-  '<p>Easy uses Part 2 one-step and two-step equations. Medium adds both sides, brackets and fractions. Hard adds harder fractions and inequalities from Parts 3 and 6.</p>'+
+  '<p>Easy has one-step and two-step equations. Medium adds x on both sides, brackets and fractions. Hard adds harder fractions and inequalities.</p>'+
   '<div style="display:flex;gap:8px"><button class="btn" id="go">Start hunting</button></div>';
   $("ov").classList.add("on");$("go").focus();$("go").onclick=function(){$("ov").classList.remove("on")};
 }

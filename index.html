@@ -3,27 +3,93 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Topic 4 Games: Linear Equations and Inequalities</title>
+<title>Pick a game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#dfe7f1;--card:#ffffff;--ink:#16243a;--soft:#4c5d76;--edge:#2f4a6b;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#17202e;--card:#223047;--ink:#e8eef6;--soft:#9fb0c6;--edge:#0e1726;color-scheme:dark}}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif;padding:20px;box-sizing:border-box}
-main{max-width:560px;width:100%}
-h1{font-size:1.6rem;margin:0 0 4px}
-p{color:var(--soft);margin:0 0 20px}
-a{display:block;background:var(--card);color:var(--ink);text-decoration:none;border-radius:12px;padding:16px 18px;margin-bottom:12px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
-a:hover{outline:3px solid var(--edge)}
-a:focus-visible{outline:3px solid #3b82f6;outline-offset:2px}
-a b{display:block;font-size:1.2rem;margin-bottom:2px}
-a span{color:var(--soft)}
+:root{--bg:#ffffff;--ink:#111111;--line:#111111;--faint:rgba(17,17,17,.14);--soft:#555555;--yellow:#ffe000;--red:#f26b5e;--grey:#cfd1d4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--ink:#f2f2f2;--line:#f2f2f2;--faint:rgba(242,242,242,.14);--soft:#b4b4b4;--grey:#6d7075;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121212;--ink:#f2f2f2;--line:#f2f2f2;--faint:rgba(242,242,242,.14);--soft:#b4b4b4;--grey:#6d7075;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Montserrat","Helvetica Neue",Arial,sans-serif;font-weight:400;overflow-x:hidden}
+.deco{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.deco .l{stroke:var(--faint);stroke-width:1.2;fill:none}
+main{position:relative;z-index:1;min-height:100%;max-width:1040px;margin:0 auto;padding:clamp(28px,6vh,72px) clamp(18px,4vw,40px) 40px;display:flex;flex-direction:column}
+header{text-align:right;margin-bottom:clamp(28px,6vh,60px)}
+h1{margin:0;font-weight:300;font-size:clamp(2.6rem,8vw,5.2rem);line-height:.95;letter-spacing:.02em;text-transform:uppercase}
+.rule{display:inline-block;width:56px;height:2px;background:var(--ink);margin-top:18px}
+.games{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,36px);flex:1;align-content:start}
+a.game{position:relative;display:flex;flex-direction:column;color:var(--ink);text-decoration:none;border:1.5px solid var(--line);background:var(--bg);padding:22px 24px 24px;min-height:340px}
+a.game::after{content:"";position:absolute;inset:0;border:1.5px solid var(--line);transform:translate(0,0);transition:transform .2s ease;z-index:-1;background:var(--yellow)}
+a.game:hover::after,a.game:focus-visible::after{transform:translate(10px,10px)}
+a.game:focus-visible{outline:none}
+.art{width:100%;height:auto;flex:1;max-height:220px;display:block;margin:4px 0 18px}
+.art .s{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.art .t{fill:none;stroke:var(--line);stroke-width:1.2}
+h2{margin:0;font-weight:300;font-size:clamp(1.8rem,3.4vw,2.4rem);letter-spacing:.06em;text-transform:uppercase;line-height:1}
+.desc{margin:10px 0 18px;color:var(--soft);font-size:.98rem;line-height:1.55;max-width:34ch}
+.play{margin-top:auto;font-weight:500;font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px}
+.play i{display:inline-block;width:34px;height:2px;background:var(--ink);transition:width .2s ease}
+a.game:hover .play i{width:54px}
+@media (max-width:700px){
+  .games{grid-template-columns:1fr}
+  a.game{min-height:0}
+  .art{max-height:150px}
+  header{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){a.game::after,.play i{transition:none}}
 </style>
 </head>
 <body>
+<svg class="deco" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <path class="l" d="M60 0V800M150 120V800M0 330H520M0 520H520M330 300V800M1080 0V800M1120 260V800M760 640H1200"/>
+  <path d="M70 40 L70 170 L190 170 Z" fill="var(--yellow)" opacity=".9"/>
+  <path class="l" d="M70 40 L190 170M86 60V250M100 76V260M114 92V240"/>
+  <path d="M1120 690 A70 70 0 0 1 1120 830 Z" fill="var(--yellow)" opacity=".85"/>
+  <circle class="l" cx="900" cy="720" r="34"/><circle class="l" cx="950" cy="690" r="26"/>
+  <path class="l" d="M230 600l20 26 20-26 20 26 20-26"/><path class="l" d="M95 660l24 24M119 660l-24 24"/><path class="l" d="M92 430h24M92 440h24"/>
+</svg>
 <main>
-  <h1>Topic 4: Linear equations and inequalities</h1>
-  <p>Pick a game.</p>
-  <a href="bug-hunt.html"><b>Bug Hunt</b><span>Solve each equation to find how many bugs are hiding nearby.</span></a>
-  <a href="brick-quest.html"><b>Brick Quest</b><span>Nine maze rooms that follow Parts 1 to 7 of the notes.</span></a>
+  <header>
+    <h1>Pick a game</h1>
+    <span class="rule" aria-hidden="true"></span>
+  </header>
+  <div class="games">
+    <a class="game" href="bug-hunt.html">
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Line drawing of a bug">
+        <path class="t" d="M20 170H300M60 30V185M260 20V185"/>
+        <path d="M160 64 A44 58 0 0 0 160 180 Z" fill="var(--red)" opacity=".8"/>
+        <ellipse class="s" cx="160" cy="122" rx="44" ry="58"/>
+        <path class="s" d="M160 64V180"/>
+        <circle class="s" cx="160" cy="50" r="16"/>
+        <path class="s" d="M152 36C146 22 136 16 124 16M168 36C174 22 184 16 196 16"/>
+        <path class="s" d="M118 98L86 82M116 124H80M120 150L88 168M202 98L234 82M204 124H240M200 150L232 168"/>
+        <circle class="s" cx="182" cy="106" r="5"/><circle class="s" cx="180" cy="148" r="5"/>
+      </svg>
+      <h2>Bug Hunt</h2>
+      <p class="desc">Dig for hidden bugs. Solve each equation to find how many are nearby, then net them all.</p>
+      <span class="play">Play <i></i></span>
+    </a>
+    <a class="game" href="brick-quest.html">
+      <svg class="art" viewBox="0 0 320 200" role="img" aria-label="Line drawing of a building brick">
+        <path class="t" d="M20 176H300M44 20V190M282 30V190"/>
+        <!-- side face shaded -->
+        <path d="M232 92 L232 142 L160 180 L160 130 Z" fill="var(--grey)"/>
+        <!-- brick outline: top, front, side -->
+        <path class="s" d="M88 92 L160 54 L232 92 L160 130 Z"/>
+        <path class="s" d="M88 92 V142 L160 180 L232 142 V92"/>
+        <path class="s" d="M160 130 V180"/>
+        <!-- studs -->
+        <g class="s" style="fill:var(--bg)"><path d="M160 64 V54 A10 5.4 0 0 1 180 54 V64 A10 5.4 0 0 1 160 64 Z"/><ellipse cx="170" cy="54" rx="10" ry="5.4"/><path d="M124 82 V72 A10 5.4 0 0 1 144 72 V82 A10 5.4 0 0 1 124 82 Z"/><ellipse cx="134" cy="72" rx="10" ry="5.4"/><path d="M176 83 V73 A10 5.4 0 0 1 196 73 V83 A10 5.4 0 0 1 176 83 Z"/><ellipse cx="186" cy="73" rx="10" ry="5.4"/><path d="M140 101 V91 A10 5.4 0 0 1 160 91 V101 A10 5.4 0 0 1 140 101 Z"/><ellipse cx="150" cy="91" rx="10" ry="5.4"/></g>
+      </svg>
+      <h2>Brick Quest</h2>
+      <p class="desc">Guide Cheryl through nine maze rooms. Step on move plates to solve equations and open the exit.</p>
+      <span class="play">Play <i></i></span>
+    </a>
+  </div>
 </main>
 </body>
 </html>
