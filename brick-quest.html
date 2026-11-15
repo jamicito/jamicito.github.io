@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brick Quest: Topic 4 Linear Equations and Inequalities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--hdr:#f3eedc;--bg:#1a1238;--dot:#2a1f55;--panel:#2b2150;--panel2:#3a2d6a;--edge:#6b5bb8;--edgeD:#140d2c;--ink:#f3eedc;--soft:#b7acd9;--amber:#ffcf4a;--teal:#14857f;--magenta:#c2399b;--orange:#e07b1f;--box:#f3eedc;--boxInk:#1d1636;color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--hdr:#1d1636;--bg:#cfc6ea;--dot:#bdb2e0;--panel:#2b2150;--panel2:#3a2d6a;color-scheme:light}}
+:root[data-theme="light"]{--hdr:#1d1636;--bg:#cfc6ea;--dot:#bdb2e0;color-scheme:light}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;overflow:hidden;background:var(--bg) radial-gradient(var(--dot) 1.5px,transparent 1.6px) 0 0/12px 12px;color:var(--ink);font-family:"VT323","Courier New",monospace;font-size:21px;line-height:1.15}
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;padding:8px 10px;max-width:1280px;margin:0 auto}
+header{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;min-width:0}
+.logo{color:var(--hdr);display:flex;align-items:center;gap:8px;margin-right:auto;min-width:0}
+.logo h1{font-family:"Silkscreen","VT323",monospace;font-weight:400;font-size:1.05rem;margin:0;line-height:1;white-space:nowrap}
+.logo small{display:block;font-family:"VT323",monospace;font-size:1rem;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logo svg{width:30px;height:30px;flex:none}
+button{font-family:"Silkscreen","VT323",monospace;font-size:.72rem;color:var(--ink);background:var(--panel2);border:0;padding:.55em .8em;cursor:pointer;
+  box-shadow:inset 3px 3px 0 var(--edge),inset -3px -3px 0 var(--edgeD)}
+button:hover{background:#4a3a86}button:active{box-shadow:inset -3px -3px 0 var(--edge),inset 3px 3px 0 var(--edgeD)}
+button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.go{background:#b8860b;color:#1d1636;box-shadow:inset 3px 3px 0 #ffd970,inset -3px -3px 0 #6b4a05}
+.go:hover{background:#d19c16}
+.play{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:12px;min-height:0}
+.left{display:flex;flex-direction:column;min-height:0;min-width:0;gap:8px}
+.boardbox{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+canvas{display:block;image-rendering:pixelated;box-shadow:0 0 0 4px #c98a2e,0 0 0 8px #7a4a12,0 0 0 11px #2a1a08;touch-action:none}
+canvas:focus{outline:none}
+.hud{display:flex;flex-direction:column;gap:8px;min-height:0}
+.card{background:var(--panel);padding:8px 10px;box-shadow:inset 3px 3px 0 var(--panel2),inset -3px -3px 0 var(--edgeD)}
+.lab{font-family:"Silkscreen",monospace;font-size:.62rem;color:var(--soft);margin:0 0 4px;font-weight:400}
+.room{font-family:"Silkscreen",monospace;font-size:.8rem;line-height:1.25}
+.ref{color:var(--amber);font-size:1rem;margin-top:3px}
+.parts{display:flex;gap:4px;margin-top:6px}
+.parts span{flex:1;height:20px;display:flex;align-items:center;justify-content:center;font-family:"Silkscreen",monospace;font-size:.6rem;background:#1d1636;color:var(--soft);box-shadow:inset 2px 2px 0 var(--edgeD)}
+.parts span.done{background:var(--teal);color:#fff}
+.parts span.cur{background:var(--amber);color:#1d1636}
+.carry{background:#0f0a22;color:var(--amber);padding:6px 8px;font-size:1.7rem;text-align:center;min-height:1.6em;display:flex;align-items:center;justify-content:center;box-shadow:inset 3px 3px 0 #000}
+.carry.solved{color:#7df0e6}
+.lastmove{font-size:1rem;color:var(--soft);margin-top:4px;min-height:1.1em}
+.bricks{display:flex;gap:5px;flex-wrap:wrap}
+.qb{width:22px;height:22px;background:#1d1636;box-shadow:inset 2px 2px 0 var(--edgeD);display:flex;align-items:center;justify-content:center;font-family:"Silkscreen",monospace;font-size:.6rem;color:var(--soft)}
+.qb.got{background:var(--magenta);color:#fff;box-shadow:inset 2px 2px 0 #f07ad0,inset -2px -2px 0 #6d1554}
+.gates{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;font-size:1.05rem}
+.gates li{display:flex;gap:6px;align-items:center}
+.gates b{display:inline-flex;width:20px;height:20px;background:var(--orange);color:#1d1636;align-items:center;justify-content:center;font-family:"Silkscreen",monospace;font-size:.6rem;font-weight:400;flex:none}
+.msgc{flex:1;min-height:0;overflow:auto}
+.msg{font-size:1.1rem}
+.dpad{display:none;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(2,40px);gap:4px;justify-content:center;flex:none}
+.dpad button{padding:0;font-size:1rem}
+.dpad .u{grid-column:2;grid-row:1}.dpad .l{grid-column:1;grid-row:2}.dpad .d{grid-column:2;grid-row:2}.dpad .r{grid-column:3;grid-row:2}
+@media (pointer:coarse){.dpad{display:grid}}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(10,6,24,.78);z-index:5}
+.ov.on{display:flex}
+.box{background:var(--box);color:var(--boxInk);padding:16px 18px;max-width:560px;width:100%;max-height:100%;overflow:auto;
+  box-shadow:0 0 0 4px #c98a2e,0 0 0 8px #7a4a12,inset -4px -4px 0 #cfc5a6}
+.box h2{font-family:"Silkscreen",monospace;font-weight:400;font-size:1rem;margin:0 0 6px;line-height:1.3}
+.box .tag{color:#7a3fb0;font-size:1.05rem;margin-bottom:6px}
+.box p{margin:0 0 8px;font-size:1.3rem;line-height:1.2}
+.box button{color:var(--ink)}
+.opts{display:flex;flex-direction:column;gap:6px;margin:8px 0 4px}
+.opts button{text-align:left;font-family:"VT323",monospace;font-size:1.35rem;background:#fff;color:var(--boxInk);box-shadow:inset 3px 3px 0 #fff,inset -3px -3px 0 #b9ae8e,0 0 0 2px #1d1636}
+.opts button:hover{background:#fff5d6}
+.opts button.right{background:#2fa87a;color:#fff;box-shadow:inset 3px 3px 0 #6fe0b4,inset -3px -3px 0 #16654a,0 0 0 2px #1d1636}
+.opts button.wrong{opacity:.5;text-decoration:line-through}
+.fb{min-height:1.3em;margin:6px 0;font-size:1.2rem}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 4px}
+.levels button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:.5em .6em;line-height:1.25;min-height:58px;font-size:.62rem}
+.levels button b{font-weight:400;color:var(--amber);font-size:.62rem}
+.levels button.done{background:#1d6b5c}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+/* portrait and narrow screens: board on top, compact panel below */
+@media (max-width:760px),(max-aspect-ratio:1/1){
+  .app{padding:6px 8px;gap:6px}
+  .play{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .left .boardbox{flex:none;padding:10px 0}
+  .hud{display:flex;flex-direction:column;gap:6px}
+  .hud .card{padding:6px 8px}
+  .room{font-size:.68rem}.ref{font-size:.95rem}
+  .carry{font-size:1.35rem;min-height:1.3em}
+  .msgc{min-height:2.4em}
+  .msg{font-size:1rem}
+  .roomcard .parts{display:none}
+  .levels{grid-template-columns:repeat(2,1fr)}
+  .logo small{display:none}
+  button{font-size:.62rem;padding:.5em .6em}
+}
+@media (max-width:420px){.hide-s{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 10 10" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="1" width="8" height="8" fill="#c2399b"/><rect x="1" y="1" width="8" height="1" fill="#f07ad0"/><rect x="1" y="8" width="8" height="1" fill="#6d1554"/><rect x="4" y="3" width="2" height="1" fill="#fff"/><rect x="5" y="4" width="1" height="1" fill="#fff"/><rect x="4" y="5" width="1" height="1" fill="#fff"/><rect x="4" y="7" width="1" height="1" fill="#fff"/></svg>
+    <h1>Brick Quest<small>Topic 4: linear equations and inequalities</small></h1>
+  </div>
+  <button id="bLevels">Rooms</button>
+  <button id="bRestart">Restart<span class="hide-s"> room</span></button>
+  <button id="bHint" class="go">Hint</button>
+</header>
+<div class="play">
+  <div class="left">
+    <div class="boardbox" id="boardbox"><canvas id="cv" role="img" aria-label="Game board"></canvas></div>
+    <div class="dpad" aria-label="Move">
+      <button class="u" data-d="0,-1" aria-label="Up">▲</button><button class="l" data-d="-1,0" aria-label="Left">◀</button>
+      <button class="d" data-d="0,1" aria-label="Down">▼</button><button class="r" data-d="1,0" aria-label="Right">▶</button>
+    </div>
+  </div>
+  <aside class="hud">
+    <div class="card wide roomcard"><div class="room" id="room"></div><div class="ref" id="ref"></div><div class="parts" id="parts" aria-label="Progress through the notes"></div></div>
+    <div class="card wide" id="carryCard"><div class="lab" id="carryH">You carry</div><div class="carry" id="carry"></div><div class="lastmove" id="last"></div></div>
+    <div class="card" id="brickCard"><div class="lab">Question bricks</div><div class="bricks" id="bricks"></div></div>
+    <div class="card" id="gateCard"><div class="lab">Gates</div><ul class="gates" id="gates"></ul></div>
+    <div class="card wide msgc"><div class="msg" id="msg" role="status" aria-live="polite"></div></div>
+  </aside>
+</div>
+</div>
+<div class="ov" id="ov"><div class="box" id="box" role="dialog" aria-modal="true"></div></div>
+<script>
+/* ===== fractions ===== */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t}return a||1}
+function Q(n,d){d=d||1;if(d<0){n=-n;d=-d}var g=gcd(n,d);return {n:n/g,d:d/g}}
+function qadd(p,q){return Q(p.n*q.d+q.n*p.d,p.d*q.d)}
+function qmul(p,q){return Q(p.n*q.n,p.d*q.d)}
+function qz(p){return p.n===0}
+function qeq(p,q){return p.n===q.n&&p.d===q.d}
+function qval(p){return p.n/p.d}
+var MINUS="\u2212";
+function ms(s){return String(s).replace(/-/g,MINUS)}
+function qs(p){return ms(p.d===1?String(p.n):p.n+"/"+p.d)}
+
+/* ===== equations and inequalities: a·x + b  rel  c·x + d ===== */
+var FLIP={"=":"=","<":">",">":"<","≤":"≥","≥":"≤"};
+function lin(A,B){ /* integers */
+  var s="";
+  if(A!==0)s=A===1?"x":A===-1?"−x":ms(A)+"x";
+  if(B!==0){if(!s)s=ms(B);else s+=(B<0?" − ":" + ")+Math.abs(B)}
+  return s||"0";
+}
+function side(a,b){
+  var D=a.d*b.d/gcd(a.d,b.d);
+  var A=a.n*D/a.d,B=b.n*D/b.d;
+  if(D===1)return lin(A,B);
+  if(qz(b)){ var neg=A<0,t=(Math.abs(A)===1?"x":Math.abs(A)+"x")+"/"+D; return (neg?"−":"")+t }
+  if(qz(a))return qs(b);
+  return "("+lin(A,B)+")/"+D;
+}
+function eqText(e){return side(e.a,e.b)+" "+e.rel+" "+side(e.c,e.d)}
+function isolated(e){
+  return (qeq(e.a,Q(1))&&qz(e.b)&&qz(e.c))||(qeq(e.c,Q(1))&&qz(e.d)&&qz(e.a));
+}
+function applyOp(e,op){
+  var r={a:e.a,b:e.b,c:e.c,d:e.d,rel:e.rel},flipped=false;
+  if(op.t==="add"){r.b=qadd(r.b,op.k);r.d=qadd(r.d,op.k)}
+  else if(op.t==="addx"){r.a=qadd(r.a,op.k);r.c=qadd(r.c,op.k)}
+  else if(op.t==="mul"||op.t==="div"){
+    var k=op.t==="mul"?op.k:Q(op.k.d,op.k.n);
+    r.a=qmul(r.a,k);r.b=qmul(r.b,k);r.c=qmul(r.c,k);r.d=qmul(r.d,k);
+    if(qval(k)<0&&r.rel!=="="){r.rel=FLIP[r.rel];flipped=true}
+  }
+  else if(op.t==="swap"){r={a:e.c,b:e.d,c:e.a,d:e.b,rel:FLIP[e.rel]}}
+  return {e:r,flipped:flipped};
+}
+function opLabel(op){
+  if(op.t==="add")return (qval(op.k)<0?"−":"+")+qs(Q(Math.abs(op.k.n),op.k.d));
+  if(op.t==="addx"){var n=Math.abs(op.k.n);return (op.k.n<0?"−":"+")+(n===1?"":n)+"x"}
+  if(op.t==="mul")return "×"+(op.k.n<0?"("+qs(op.k)+")":qs(op.k));
+  if(op.t==="div")return "÷"+(op.k.n<0?"("+qs(op.k)+")":qs(op.k));
+  return "⇄";
+}
+function opSay(op){
+  if(op.t==="add")return (qval(op.k)<0?"Subtract ":"Add ")+qs(Q(Math.abs(op.k.n),op.k.d))+" on both sides";
+  if(op.t==="addx"){var n=Math.abs(op.k.n);return (op.k.n<0?"Subtract ":"Add ")+(n===1?"":n)+"x on both sides"}
+  if(op.t==="mul")return "Multiply both sides by "+qs(op.k);
+  if(op.t==="div")return "Divide both sides by "+qs(op.k);
+  return "Swap the two sides";
+}
+var O={
+  add:function(n,d){return {t:"add",k:Q(n,d)}},addx:function(n){return {t:"addx",k:Q(n)}},
+  mul:function(n,d){return {t:"mul",k:Q(n,d)}},div:function(n){return {t:"div",k:Q(n)}},swap:function(){return {t:"swap"}}
+};
+function EQ(a,b,rel,c,d){return {a:a,b:b,c:c,d:d,rel:rel}}
+
+/* ===== levels =====
+   #  wall        .  floor       P  start      X  exit
+   ?  question brick (collect all to open the exit)
+   a–h  operation plates (used once, applied to both sides)
+   A, C–G  number pads (sets the number you carry)
+   1–3  gates (open only if your number makes the gate true)
+   H  Albert’s hint sign      B  patrol bot (moves left and right)
+*/
+var PARTS=["Concept of an equation","Solving linear equations","Fractional equations","Formulae","Real-world problems","Linear inequalities","Problem solving"];
+var LEVELS=[
+{name:"Equation or expression?",part:1,ref:"Part 1: Thinking time and Investigation",
+ brief:"Collect the question bricks to unlock the exit. They follow Part 1 of your notes in order.",
+ hint:"An equation has an ‘=’ sign. A linear equation only has variables with index 1.",
+ map:["###############",
+      "#P..#....?....#",
+      "#.#.#.#####.#.#",
+      "#.#...#...#.#.#",
+      "#.#####.#.#.#.#",
+      "#?..H...#...#.#",
+      "#.#######.###.#",
+      "#...#?..#.....#",
+      "###.#.#.#####.#",
+      "#?....#......X#",
+      "###############"],
+ qs:[
+  {ref:"Part 1, Thinking time",q:"Which one is an equation?",o:["3x + 2 = 11","3x + 2","x² + 1"],a:0,w:["","No ‘=’ sign, so it’s an expression.","No ‘=’ sign, so it’s an expression."]},
+  {ref:"Part 1, Thinking time",q:"In 4 + x = 7, which part is the right-hand side?",o:["7","4 + x","x"],a:0,w:["","That’s on the left of the ‘=’ sign.","x is on the left of the ‘=’ sign."]},
+  {ref:"Part 1, Investigation",q:"Which equation is linear?",o:["y = 2x − 9","3x² − 2 = 0","√y = 2x − 9","xy = 1"],a:0,w:["","x² has index 2.","√y means y has index ½.","x times y is not linear."]},
+  {ref:"Part 1, Investigation",q:"Which equation is NOT linear?",o:["a/b = b","x/3 = 7","a + 2b + 3c = 0"],a:0,w:["","x/3 is just ⅓ of x. Index 1, so it’s linear.","Every variable here has index 1."]}
+ ]},
+{name:"Balance moves",part:2,ref:"Part 2: Example 2.1",
+ eq:EQ(Q(2),Q(-5),"=",Q(0),Q(5)),eqref:"Example 2.1 (e)",
+ ops:{a:O.add(5),b:O.div(2),c:O.add(-5),d:O.mul(2)},
+ brief:"You carry Example 2.1 (e). Stepping on a teal plate does that move to <b>both sides</b>, and each plate works once. Reach the exit with x on its own.",
+ hint:"Undo the − 5 before you divide. Press R to restart if you get stuck.",
+ map:["###############",
+      "#P....#...c...#",
+      "#.###.#.#####.#",
+      "#.#H..b.......#",
+      "#.#####.#####.#",
+      "#.....#.#...#.#",
+      "#####.#.#.#.#.#",
+      "#...a.#...#?#.#",
+      "#.#####.###.#.#",
+      "#.......d....X#",
+      "###############"],
+ qs:[{ref:"Part 2, Example 2.1 (d)",q:"Solve 2x/7 = 3.",o:["x = 10.5","x = 6/7","x = 21"],a:0,w:["","That’s 3 × 2/7. Divide by 2/7 instead.","That’s 2x. Divide by 2 as well."]}]},
+{name:"Both sides",part:2,ref:"Part 2: Examples 2.2 and 2.3",
+ eq:EQ(Q(3),Q(4),"=",Q(1),Q(-10)),eqref:"Example 2.2 (a)",
+ ops:{a:O.addx(-1),b:O.addx(1),c:O.add(-4),d:O.add(4),e:O.div(2),f:O.div(3)},
+ brief:"You carry Example 2.2 (a): x is on both sides. Collect the x terms on one side first.",
+ hint:"Subtract x, then subtract 4, then divide by 2.",
+ map:["###############",
+      "#P..a...#..?..#",
+      "#.#####.#.###.#",
+      "#.#..b..#.#e..#",
+      "#.#.#######.#.#",
+      "#...#.c...#.#.#",
+      "#.###.###.#.#.#",
+      "#.#?..#d..f.#.#",
+      "#.#.###.#.##..#",
+      "#.....#......X#",
+      "###############"],
+ qs:[{ref:"Part 2, Example 2.2 (b)",q:"Solve 4x − 2 = x + 7.",o:["x = 3","x = 5/3","x = −3"],a:0,w:["","3x − 2 = 7, so 3x = 9.","Check: 4(−3) − 2 = −14, but −3 + 7 = 4."]},
+     {ref:"Part 2, Example 2.3 (a)",q:"Expand 2(x − 3).",o:["2x − 6","2x − 3","x − 6"],a:0,w:["","The 2 multiplies both terms: 2 × 3 = 6.","The 2 multiplies x too."]}]},
+{name:"Fraction fix",part:3,ref:"Part 3: Examples 3.1 and 3.2",
+ eq:EQ(Q(1,5),Q(-2,5),"=",Q(0),Q(-3)),eqref:"Example 3.1 (a)",
+ ops:{a:O.mul(5),b:O.add(2),c:O.add(-2),d:O.mul(2),e:O.div(5)},
+ brief:"You carry Example 3.1 (a). Multiply both sides by the LCM of the denominators to clear the fraction.",
+ hint:"× 5 first, then + 2.",
+ map:["###############",
+      "#P.#....?.....#",
+      "#..#.####.###.#",
+      "#..a....#.#c..#",
+      "##.####.#.#.#.#",
+      "#......d#...#.#",
+      "#.####.####.#.#",
+      "#.#?.#....b.#.#",
+      "#.#.####.####.#",
+      "#......e.....X#",
+      "###############"],
+ qs:[{ref:"Part 3, Example 3.1 (c)",q:"Solve 8/(2x − 3) = 4.",o:["x = 2½","x = 5/4","x = 1"],a:0,w:["","8 = 4(2x − 3), so 8 = 8x − 12, 8x = 20.","Check: 2(1) − 3 = −1, and 8/(−1) = −8."]},
+     {ref:"Part 3, Example 3.2 (b)",q:"To clear the fractions in (3z − 1)/2 = (z − 4)/3, multiply both sides by…",o:["6","5","2"],a:0,w:["","The LCM of 2 and 3 is 6, not 2 + 3.","That only clears the 2."]}]},
+{name:"Formula lab",part:4,ref:"Part 4: Examples 4.1 to 4.4",
+ brief:"Four formula questions, in the order of Part 4. Patrol bugs send you back to the start if they touch you.",
+ hint:"Watch the bugs, then slip past behind them.",
+ map:["###############",
+      "#P......#....?#",
+      "#.#####.#.###.#",
+      "#.#?....B.#...#",
+      "#.#.#######.#.#",
+      "#...#..H..#.#.#",
+      "###.#.###.#.#.#",
+      "#?..B.....#.#.#",
+      "#.#######.#.#.#",
+      "#.........#.?X#",
+      "###############"],
+ qs:[{ref:"Part 4, Example 4.1",q:"F = ma. If m = 1000 kg and a = 0.05 m/s², F = ?",o:["50 N","20 000 N","0.00005 N"],a:0,w:["","That’s 1000 ÷ 0.05. Multiply instead.","That’s 0.05 ÷ 1000. Multiply instead."]},
+     {ref:"Part 4, Example 4.2",q:"Area of a semicircle of radius 5 cm (3 s.f.)?",o:["39.3 cm²","78.5 cm²","15.7 cm²"],a:0,w:["","That’s a whole circle. Halve it.","That’s ½π × 5. Square the radius."]},
+     {ref:"Part 4, Example 4.3 (b)",q:"t = (v − u)/a. If t = 3, v = 2½ and u = 1⅓, then a = ?",o:["7/18","7/2","7/6"],a:0,w:["","That’s 7/6 × 3. Divide by 3 instead.","That’s v − u. Divide it by t."]},
+     {ref:"Part 4, Example 4.4",q:"If x² + 5x = 5, then x³ + 6x² = ?",o:["5","25","30"],a:0,w:["","x³ + 6x² = x(x² + 5x + x) = x(5 + x) = x² + 5x.","x³ + 6x² = x(x² + 5x + x) = x(5 + x) = x² + 5x."]}]},
+{name:"Word problem vault",part:5,ref:"Part 5: Things to note and Examples 5.1 to 5.3",
+ brief:"Word problems in the order of Part 5. Let x be the unknown, form an equation, and solve it.",
+ hint:"Write a starting statement first: “Let … be x.”",
+ map:["###############",
+      "#P....#?......#",
+      "#.###.#.#####.#",
+      "#.#?#...#...#.#",
+      "#.#.#####.#.#.#",
+      "#...#.H...#...#",
+      "#.#.#.#######.#",
+      "#.#...#?....#.#",
+      "#.#####.###.#.#",
+      "#?......#....X#",
+      "###############"],
+ qs:[{ref:"Part 5, Things to note",q:"Which is the best starting statement?",o:["Let John’s age be x years.","x = John","Let x be John."],a:0,w:["","x stands for a number, so say what it measures and its unit.","x stands for a number, so say what it measures and its unit."]},
+     {ref:"Part 5, like Example 5.1",q:"Two numbers add up to 30. One is 4 times the other. The smaller number is…",o:["6","7.5","24"],a:0,w:["","x + 4x = 30 gives 5x = 30.","24 is the bigger number."]},
+     {ref:"Part 5, like Example 5.2",q:"Ali scores 12 marks more than Ben, and twice as many as Ben. How many marks does Ben score?",o:["12","24","6"],a:0,w:["","24 is Ali’s score. x + 12 = 2x gives x = 12.","x + 12 = 2x gives x = 12."]},
+     {ref:"Part 5, like Example 5.3",q:"One-third of a number plus 2½ is 6. The number is…",o:["10½","3½","1⅙"],a:0,w:["","3½ is one-third of the number. Multiply by 3.","Multiply ⅓x = 3½ by 3, don’t divide."]}]},
+{name:"Inequality gates",part:6,ref:"Part 6: Solving inequalities, Examples 6.1 and 6.3",
+ pads:{A:-6,G:0,C:5,D:1,E:3,F:4},
+ gates:{1:{lab:"x − 2 > −6",ref:"notes",f:function(x){return x-2>-6}},2:{lab:"1 − x ≥ 7x − 15",ref:"Ex 6.1 (a)",f:function(x){return 1-x>=7*x-15}},3:{lab:"4(3 − x) < x − 3",ref:"Ex 6.3",f:function(x){return 4*(3-x)<x-3}}},
+ brief:"Step on a white pad to carry its number. A gate only opens if your number makes its inequality true. The gates follow Part 6 in order.",
+ hint:"Solve each gate’s inequality first. Gate 1 is x > −4.",
+ map:["###############",
+      "#P..A#..C..#E.#",
+      "#....#.....#..#",
+      "#..H.1.....2..#",
+      "#....#...H.#.F#",
+      "#.G..#..D..#..#",
+      "############3##",
+      "#.....?.......#",
+      "#.............#",
+      "#............X#",
+      "###############"],
+ qs:[{ref:"Part 6, Example 6.3 (i)",q:"x > 3 and x is a prime number. What is the smallest x?",o:["5","3","4"],a:0,w:["","x must be greater than 3, not equal to it.","4 isn’t prime."]}]},
+{name:"Sign flipper",part:6,ref:"Part 6: Investigation and Example 6.2",
+ eq:EQ(Q(-2),Q(1),">",Q(0),Q(7)),eqref:"Part 6 investigation",
+ ops:{a:O.add(-1),b:O.add(1),c:O.div(-2),d:O.div(2)},
+ bots:true,
+ brief:"Now you carry an inequality. Watch the sign when you divide by a negative number!",
+ hint:"Subtract 1, then divide by −2.",
+ map:["###############",
+      "#P.......a....#",
+      "#.##.#.#####..#",
+      "#.#..d.#?..#..#",
+      "#.#.####.#.#.##",
+      "#...#....#.c..#",
+      "###.#.####.##.#",
+      "#?..#..B......#",
+      "#.#####.#####.#",
+      "#.....b......X#",
+      "###############"],
+ qs:[{ref:"Part 6, like Example 6.2",q:"A van carries at most 12 people. What is the minimum number of vans for 80 people?",o:["7","6","6⅔"],a:0,w:["","6 vans carry only 72 people.","You can’t hire part of a van. Round up."]},
+     {ref:"Part 6, Example 6.3",q:"Solve 4(3 − x) < x − 3.",o:["x > 3","x < 3","x > −3"],a:0,w:["","−5x < −15. Dividing by −5 flips the sign.","−15 ÷ −5 = +3."]}]},
+{name:"Problem solver",part:7,ref:"Part 7: Example 7.1, Pólya’s four stages",
+ bots:true,
+ brief:"Example 7.1: find all integers x so that x/(10 − x) is an integer. The bricks follow Pólya’s four stages.",
+ hint:"Let x/(10 − x) = n, then (n + 1) must be a factor of 10.",
+ map:["###############",
+      "#P....#...?...#",
+      "#.###.#.#####.#",
+      "#.#?....#.....#",
+      "#.#.#####.###.#",
+      "#...#.H.#.#?#.#",
+      "###.#.#.#.#.#.#",
+      "#?..#.#...#.#.#",
+      "#.###.#####.#.#",
+      "#.....B...?..X#",
+      "###############"],
+ qs:[{ref:"Part 7, Stage 1",q:"Before doing any working, Pólya’s first stage is to…",o:["understand the problem","carry out the plan","look back"],a:0,w:["","That’s stage 3. First make sure you understand what’s asked.","That’s the last stage."]},
+     {ref:"Part 7, Stage 3",q:"Let x/(10 − x) = n. Which expression gives x?",o:["x = 10n/(n + 1)","x = 10n/(n − 1)","x = 10/(n + 1)"],a:0,w:["","x = 10n − nx, so x + nx = 10n.","x = n(10 − x) = 10n − nx, so (n + 1)x = 10n."]},
+     {ref:"Part 7, Stage 3",q:"(n + 1) must be a factor of 10. Which value is NOT allowed for n + 1?",o:["3","−5","10"],a:0,w:["","−5 is a factor of 10 too.","10 is a factor of 10."]},
+     {ref:"Part 7, Stage 3",q:"When n + 1 = −2, what is x = 10n/(n + 1)?",o:["15","−15","5"],a:0,w:["","n = −3, so x = −30 ÷ −2 = +15.","5 comes from n + 1 = 2."]},
+     {ref:"Part 7, Stage 4",q:"Look back: for x = 20, x/(10 − x) = ?",o:["−2","2","−½"],a:0,w:["","10 − 20 = −10, so the answer is negative.","20 ÷ (−10) = −2."]}]}
+];
+
+
+</script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var cv=$("cv"),ctx=cv.getContext("2d"),ov=$("ov"),box=$("box"),bb=$("boardbox");
+var RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+var T=48,P=3,PIX='"Silkscreen","VT323",monospace';
+var KEY="brickquest-topic4-v2";
+var done={};try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+var G=null,li=0;
+
+/* ---------- fit the board to the space ---------- */
+function fitCanvas(){
+  if(!G)return;
+  var port=matchMedia("(max-width:760px),(max-aspect-ratio:1/1)").matches;
+  var w=bb.clientWidth-24,h=port?window.innerHeight*.46:bb.clientHeight-24;if(w<50||h<50)return;
+  var s=Math.min(w/cv.width,h/cv.height);
+  cv.style.width=Math.floor(cv.width*s)+"px";cv.style.height=Math.floor(cv.height*s)+"px";
+}
+if(window.ResizeObserver)new ResizeObserver(fitCanvas).observe(bb);
+window.addEventListener("resize",fitCanvas);
+
+function partsBar(){
+  var cur=LEVELS[li].part;
+  $("parts").innerHTML=PARTS.map(function(p,k){
+    var n=k+1,rooms=LEVELS.map(function(L,j){return L.part===n?j:-1}).filter(function(j){return j>=0});
+    var all=rooms.every(function(j){return done[j]});
+    return '<span class="'+(n===cur?'cur':all?'done':'')+'" title="Part '+n+': '+p+'">'+n+'</span>';
+  }).join("");
+}
+function load(n){
+  li=n;var L=LEVELS[n],grid=L.map.map(function(r){return r.split("")});
+  var H=grid.length,W=grid[0].length,start=null,qn=0,bots=[];
+  for(var y=0;y<H;y++)for(var x=0;x<W;x++){
+    var c=grid[y][x];
+    if(c==="P"){start={x:x,y:y};grid[y][x]="."}
+    if(c==="?")qn++;
+    if(c==="B"){bots.push({x:x,y:y,dx:1,px:x,py:y});grid[y][x]="."}
+  }
+  G={L:L,grid:grid,W:W,H:H,start:start,x:start.x,y:start.y,px:start.x,py:start.y,dir:1,
+     e:L.eq||null,n:null,got:0,total:qn,moves:0,won:false,modal:false,passed:{},bots:bots};
+  cv.width=W*T;cv.height=H*T;fitCanvas();
+  $("room").textContent="Room "+(n+1)+" of "+LEVELS.length+": "+L.name;
+  $("ref").textContent=L.ref;
+  partsBar();
+  $("carryCard").style.display=(L.eq||L.gates)?"":"none";
+  $("carryH").textContent=L.gates?"Your number":"You carry ("+L.eqref+")";
+  $("gateCard").style.display=L.gates?"":"none";
+  $("brickCard").style.display=qn?"":"none";
+  if(L.gates)$("gates").innerHTML=Object.keys(L.gates).map(function(k){return '<li><b>'+k+'</b><span id="g'+k+'">'+L.gates[k].lab+'</span></li>'}).join("");
+  $("last").textContent="";
+  hud();say(L.brief.replace(/<[^>]+>/g,""));
+  showBrief();
+}
+function hud(){
+  if(G.e){var c=$("carry");c.textContent=eqText(G.e);c.classList.toggle("solved",isolated(G.e))}
+  else if(G.L.gates)$("carry").textContent=G.n===null?"No number yet":"x = "+ms(G.n);
+  var h="";for(var k=0;k<G.total;k++)h+='<span class="qb'+(k<G.got?' got':'')+'">'+(k+1)+'</span>';
+  $("bricks").innerHTML=h;
+  if(G.L.gates)Object.keys(G.L.gates).forEach(function(k){var s=$("g"+k);if(s)s.textContent=G.L.gates[k].lab+(G.passed[k]?" ✓":"")});
+}
+function say(t){$("msg").textContent=t}
+function exitOpen(){return G.got>=G.total&&(!G.e||isolated(G.e))}
+
+/* ---------- moving ---------- */
+function move(dx,dy){
+  if(!G||G.modal||G.won)return;
+  if(dx)G.dir=dx;
+  var x=G.x+dx,y=G.y+dy,c=G.grid[y][x],L=G.L;
+  if(c==="#")return;
+  if(L.gates&&L.gates[c]){
+    var gt=L.gates[c];
+    if(G.n===null){say("Gate "+c+" is locked. Step on a number pad first.");bump();return}
+    if(!gt.f(G.n)){say("Gate "+c+" stays shut: x = "+ms(G.n)+" doesn’t make "+gt.lab+" true. Try another pad.");bump();return}
+    if(!G.passed[c]){G.passed[c]=1;say("Gate "+c+" opens: x = "+ms(G.n)+" makes "+gt.lab+" true.")}
+  }
+  if(c==="X"&&!exitOpen()){
+    var need=[];if(G.got<G.total)need.push("collect "+(G.total-G.got)+" more question brick"+(G.total-G.got>1?"s":""));
+    if(G.e&&!isolated(G.e))need.push("get x on its own (you have "+eqText(G.e)+")");
+    say("The exit is locked. You still need to "+need.join(" and ")+".");bump();return;
+  }
+  G.x=x;G.y=y;G.moves++;
+  if(L.ops&&L.ops[c]){
+    var op=L.ops[c],r=applyOp(G.e,op);G.e=r.e;G.grid[y][x]=".";
+    $("last").textContent=opSay(op)+(r.flipped?". Negative, so the sign flips!":".");
+    say(isolated(G.e)?"x is on its own: "+eqText(G.e)+". Head for the exit!":"Now you have "+eqText(G.e)+".");
+  }
+  if(L.pads&&L.pads[c]!==undefined){G.n=L.pads[c];say("You now carry x = "+ms(G.n)+".")}
+  if(c==="H")say("Albert says: "+L.hint);
+  hud();
+  if(c==="?")ask(x,y);
+  if(c==="X")win();
+  checkBots();
+}
+var shakeT=-1e9;function bump(){shakeT=performance.now()}
+
+/* ---------- question bricks: always the next question in notes order ---------- */
+function ask(x,y){
+  var q=G.L.qs[G.got];G.modal=true;
+  box.innerHTML='<h2>Question '+(G.got+1)+' of '+G.total+'</h2><div class="tag">Notes: '+q.ref+'</div><p>'+q.q+'</p><div class="opts">'+
+    q.o.map(function(o,k){return '<button data-k="'+k+'">'+(k+1)+'. '+o+'</button>'}).join("")+
+    '</div><div class="fb" id="fb" role="status"></div><div class="row"><button id="later">Not now</button></div>';
+  ov.classList.add("on");box.querySelector(".opts button").focus();
+  box.querySelectorAll(".opts button").forEach(function(b){b.onclick=function(){
+    var k=+b.dataset.k,fb=$("fb");
+    if(k===q.a){
+      box.querySelectorAll(".opts button").forEach(function(z){z.disabled=true});b.classList.add("right");
+      fb.textContent="✓ Correct! Brick collected.";G.grid[y][x]=".";G.got++;hud();
+      var l=$("later");l.textContent="Keep going";l.classList.add("go");l.focus();
+      say(G.got<G.total?(G.total-G.got)+" question brick"+(G.total-G.got>1?"s":"")+" left. Next: "+G.L.qs[G.got].ref+".":"All question bricks collected!"+(G.e&&!isolated(G.e)?" Now get x on its own.":" The exit is open."));
+    } else {b.classList.add("wrong");b.disabled=true;fb.textContent="✗ "+(q.w[k]||"Not quite.")+" Try again."}
+  }});
+  $("later").onclick=closeModal;
+}
+function closeModal(){ov.classList.remove("on");G.modal=false;cv.focus()}
+
+/* ---------- overlays ---------- */
+function showBrief(){
+  G.modal=true;
+  box.innerHTML='<h2>Room '+(li+1)+': '+G.L.name+'</h2><div class="tag">Notes: '+G.L.ref+'</div><p>'+G.L.brief+'</p>'+
+   (G.e?'<p>You start with <b>'+eqText(G.e)+'</b>.</p>':'')+'<div class="row"><button class="go" id="startRoom">Start room</button></div>';
+  ov.classList.add("on");$("startRoom").focus();$("startRoom").onclick=closeModal;
+}
+function win(){
+  G.won=true;done[li]=Math.min(done[li]||1e9,G.moves);save();partsBar();
+  var last=li===LEVELS.length-1;
+  box.innerHTML='<h2>'+(last?'You escaped the Brickworks!':'Room cleared!')+'</h2><p>'+(G.e?'Final answer: <b>'+eqText(G.e)+'</b>. ':'')+G.moves+' moves.</p>'+
+   (last?'<p>All seven parts of Topic 4 done.</p>':'<p>Next: '+LEVELS[li+1].ref+'.</p>')+
+   '<div class="row">'+(last?'':'<button class="go" id="nextRoom">Next room</button>')+'<button id="again">Play again</button><button id="toRooms">Rooms</button></div>';
+  G.modal=true;ov.classList.add("on");
+  if(!last){$("nextRoom").onclick=function(){load(li+1)};$("nextRoom").focus()}
+  $("again").onclick=function(){load(li)};$("toRooms").onclick=rooms;
+}
+function rooms(){
+  if(G)G.modal=true;
+  box.innerHTML='<h2>Brick Quest</h2><p>Cheryl is locked in the Algebra Brickworks. Nine rooms follow Parts 1 to 7 of your Topic 4 notes. Move with the arrow keys, WASD, the arrow buttons or a swipe.</p><div class="levels">'+
+   LEVELS.map(function(L,k){return '<button data-l="'+k+'" class="'+(done[k]?'done':'')+'"><b>Part '+L.part+(done[k]?' ✓':'')+'</b>'+(k+1)+'. '+L.name+'</button>'}).join("")+
+   '</div>'+(G?'<div class="row"><button id="back">Back to room '+(li+1)+'</button></div>':'');
+  ov.classList.add("on");
+  box.querySelectorAll("[data-l]").forEach(function(b){b.onclick=function(){load(+b.dataset.l)}});
+  var bk=$("back");if(bk)bk.onclick=closeModal;
+  box.querySelector("[data-l]").focus();
+}
+
+/* ---------- patrol bugs ---------- */
+function stepBots(){
+  if(!G||G.modal||G.won||!G.bots.length)return;
+  G.bots.forEach(function(b){
+    var free=function(x){return G.grid[b.y][x]==="."};
+    if(!free(b.x+b.dx))b.dx=-b.dx;
+    if(free(b.x+b.dx))b.x+=b.dx;
+  });
+  checkBots();
+}
+function checkBots(){
+  for(var k=0;k<G.bots.length;k++){var b=G.bots[k];if(b.x===G.x&&b.y===G.y){
+    G.x=G.start.x;G.y=G.start.y;G.px=G.x;G.py=G.y;say("A patrol bug sent you back to the start. Your bricks and equation are safe.");bump();return}}
+}
+setInterval(stepBots,520);
+
+/* ---------- pixel art ---------- */
+function p(X,Y,x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(X+x*P,Y+y*P,w*P,h*P)}
+function hash(x,y,k){return ((x*73856093)^(y*19349663)^(k*83492791))>>>0}
+function txt(t,x,y,size,col){ctx.font=size+"px "+PIX;ctx.fillStyle=col;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(t,x,y)}
+function fitTxt(t,max,start){var s=start;ctx.font=s+"px "+PIX;while(ctx.measureText(t).width>max&&s>8){s--;ctx.font=s+"px "+PIX}return s}
+function floorT(X,Y,x,y){
+  p(X,Y,0,0,16,16,"#c9ccd1");p(X,Y,15,0,1,16,"#a9adb3");p(X,Y,0,15,16,1,"#a9adb3");p(X,Y,0,0,15,1,"#dcdfe3");
+  for(var k=0;k<3;k++){var h=hash(x,y,k);p(X,Y,1+h%13,1+(h>>5)%13,1,1,"#b8bcc2")}
+}
+function waterT(X,Y,x,y,t){
+  p(X,Y,0,0,16,16,"#1f6fb8");p(X,Y,0,0,16,1,"#2f86d6");p(X,Y,0,15,16,1,"#17558e");
+  var o=RM?0:Math.floor(t/260+x*2+y)%4;
+  for(var r=0;r<3;r++){var yy=3+r*5,xx=(r*5+o+x)%11;p(X,Y,xx,yy,3,1,"#9fd4ff");p(X,Y,xx+3,yy-1,2,1,"#9fd4ff")}
+}
+function wallT(X,Y,x,y,edge,t){
+  if(!edge&&hash(x,y,7)%3===0){waterT(X,Y,x,y,t);return}
+  var m=edge?"#3a3d42":"#4a4e54",hi=edge?"#585c63":"#6a6f76",lo=edge?"#1f2124":"#2a2c30";
+  p(X,Y,0,0,16,16,m);p(X,Y,0,0,16,1,hi);p(X,Y,0,0,1,16,hi);p(X,Y,0,15,16,1,lo);p(X,Y,15,0,1,16,lo);
+  p(X,Y,1,7,14,1,lo);p(X,Y,1,8,14,1,hi);
+  var o=(y%2)?4:10;p(X,Y,o,1,1,6,lo);p(X,Y,(o+8)%16||2,9,1,6,lo);
+}
+function qT(X,Y,t){
+  p(X,Y,1,1,14,14,"#c2399b");p(X,Y,1,1,14,2,"#f07ad0");p(X,Y,1,1,2,14,"#f07ad0");p(X,Y,1,13,14,2,"#6d1554");p(X,Y,13,1,2,14,"#6d1554");
+  var bob=RM?0:Math.round(Math.sin(t/300))*P;
+  txt("?",X+T/2,Y+T/2+2+bob*0,26,"#fff");
+}
+function opT(X,Y,lab){
+  p(X,Y,1,2,14,13,"#0c5a56");p(X,Y,1,1,14,13,"#14857f");p(X,Y,1,1,14,1,"#3cc2b8");p(X,Y,1,1,1,13,"#3cc2b8");
+  txt(lab,X+T/2,Y+T/2,fitTxt(lab,T-12,14),"#fff");
+}
+function padT(X,Y,v){
+  p(X,Y,2,2,12,12,"#1d1636");p(X,Y,3,3,10,10,"#f3eedc");p(X,Y,3,3,10,1,"#fff");
+  var s=ms(v);txt(s,X+T/2,Y+T/2+1,fitTxt(s,T-18,15),"#1d1636");
+}
+function gateT(X,Y,id,open){
+  p(X,Y,0,0,16,16,"#7a3c08");p(X,Y,1,1,14,14,open?"#c9ccd1":"#3a1d06");
+  if(!open){for(var i=0;i<4;i++)p(X,Y,2+i*4,1,2,14,"#e07b1f");p(X,Y,1,4,14,2,"#e07b1f");p(X,Y,1,11,14,2,"#e07b1f")}
+  p(X,Y,5,5,6,6,open?"#e07b1f":"#1d1636");txt(id,X+T/2,Y+T/2+1,12,open?"#1d1636":"#ffcf4a");
+}
+function hintT(X,Y){
+  p(X,Y,4,2,8,9,"#f6c690");p(X,Y,4,2,8,1,"#e2ad74");
+  p(X,Y,4,5,3,2,"#1d1636");p(X,Y,9,5,3,2,"#1d1636");p(X,Y,5,5,1,1,"#9fd8ff");p(X,Y,10,5,1,1,"#9fd8ff");p(X,Y,7,5,2,1,"#1d1636");
+  p(X,Y,6,9,4,1,"#8a3b2a");p(X,Y,5,11,6,4,"#2b6ad8");p(X,Y,7,11,2,2,"#fff");
+}
+function exitT(X,Y,open,t){
+  if(!open){p(X,Y,1,1,14,15,"#1f4d2b");p(X,Y,3,3,10,12,"#0f2a17");p(X,Y,7,6,2,2,"#7ee08a");p(X,Y,7,8,2,3,"#7ee08a");return}
+  var cols=["#b8f5c0","#5fd377","#2e9e4a","#166b2e"],o=RM?0:Math.floor(t/140);
+  for(var r=0;r<4;r++){p(X,Y,1+r*2,1+r*2,14-r*4,14-r*4,cols[(r+o)%4])}
+  p(X,Y,7,7,2,2,"#fff");
+}
+function bug(X,Y,dx){
+  p(X,Y,4,5,8,8,"#c8261c");p(X,Y,5,4,6,1,"#c8261c");p(X,Y,7,5,2,8,"#6e0e09");
+  p(X,Y,dx>0?11:3,7,2,3,"#1d1636");p(X,Y,2,6,2,1,"#1d1636");p(X,Y,12,6,2,1,"#1d1636");p(X,Y,2,10,2,1,"#1d1636");p(X,Y,12,10,2,1,"#1d1636");
+  p(X,Y,5,6,1,1,"#fff");p(X,Y,10,6,1,1,"#fff");
+}
+function cheryl(X,Y,dir,t,moving){
+  var b=moving&&!RM?((Math.floor(t/120)%2)?-1:0):0;Y+=b*P;
+  p(X,Y,3,1,10,11,"#6b3a1e");p(X,Y,4,3,8,6,"#f6c690");p(X,Y,3,2,10,1,"#2ec4c4");
+  p(X,Y,4,4,3,1,"#1d1636");p(X,Y,9,4,3,1,"#1d1636");p(X,Y,7,5,2,1,"#1d1636");
+  p(X,Y,dir>0?6:5,5,1,1,"#1d1636");p(X,Y,dir>0?11:10,5,1,1,"#1d1636");
+  p(X,Y,7,7,2,1,"#a33a2a");
+  p(X,Y,4,9,8,4,"#d23a2a");p(X,Y,7,9,2,2,"#fff");p(X,Y,3,10,1,3,"#f6c690");p(X,Y,12,10,1,3,"#f6c690");
+  p(X,Y,5,13,6,2,"#2b4fb5");p(X,Y,5,15,2,1,"#1d1636");p(X,Y,9,15,2,1,"#1d1636");
+}
+function draw(now){
+  if(G){
+    var L=G.L,open=exitOpen(),k=RM?1:.35;
+    var moving=Math.abs(G.x-G.px)+Math.abs(G.y-G.py)>.05;
+    G.px+=(G.x-G.px)*k;G.py+=(G.y-G.py)*k;
+    G.bots.forEach(function(b){b.px+=(b.x-b.px)*(RM?1:.25);b.py+=(b.y-b.py)*(RM?1:.25)});
+    var sh=(now-shakeT<200&&!RM)?(Math.floor(now/40)%2?P:-P):0;
+    ctx.save();ctx.translate(sh,0);
+    for(var y=0;y<G.H;y++)for(var x=0;x<G.W;x++){
+      var c=G.grid[y][x],X=x*T,Y=y*T;
+      if(c==="#"){wallT(X,Y,x,y,x===0||y===0||x===G.W-1||y===G.H-1,now);continue}
+      floorT(X,Y,x,y);
+      if(c==="?")qT(X,Y,now);
+      else if(L.ops&&L.ops[c])opT(X,Y,opLabel(L.ops[c]));
+      else if(L.pads&&L.pads[c]!==undefined)padT(X,Y,L.pads[c]);
+      else if(L.gates&&L.gates[c])gateT(X,Y,c,!!G.passed[c]);
+      else if(c==="H")hintT(X,Y);
+      else if(c==="X")exitT(X,Y,open,now);
+    }
+    G.bots.forEach(function(b){bug(Math.round(b.px*16)*P,Math.round(b.py*16)*P,b.dx)});
+    cheryl(Math.round(G.px*16)*P,Math.round(G.py*16)*P,G.dir,now,moving);
+    ctx.restore();
+  }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* ---------- input ---------- */
+var lastMove=0;
+document.addEventListener("keydown",function(e){
+  if(ov.classList.contains("on")){
+    if(e.key==="Escape"&&G&&!G.won&&box.querySelector("#later"))closeModal();
+    var n=parseInt(e.key,10);if(n>=1&&n<=4){var b=box.querySelector('.opts button[data-k="'+(n-1)+'"]');if(b&&!b.disabled)b.click()}
+    return;
+  }
+  var d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0],W:[0,-1],S:[0,1],A:[-1,0],D:[1,0]}[e.key];
+  if(d){e.preventDefault();var t=performance.now();if(t-lastMove<95)return;lastMove=t;move(d[0],d[1]);return}
+  if(e.key==="r"||e.key==="R")load(li);
+  if((e.key==="h"||e.key==="H")&&G)say("Albert says: "+G.L.hint);
+});
+document.querySelectorAll(".dpad button").forEach(function(b){
+  var d=b.dataset.d.split(",").map(Number),rep=null;
+  function go(){move(d[0],d[1])}
+  b.addEventListener("pointerdown",function(e){e.preventDefault();go();clearInterval(rep);rep=setInterval(go,170)});
+  ["pointerup","pointerleave","pointercancel"].forEach(function(ev){b.addEventListener(ev,function(){clearInterval(rep)})});
+});
+var sx=0,sy=0;
+cv.addEventListener("pointerdown",function(e){sx=e.clientX;sy=e.clientY});
+cv.addEventListener("pointerup",function(e){var dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+  if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1,0);else move(0,dy>0?1:-1)});
+$("bLevels").onclick=rooms;$("bRestart").onclick=function(){load(li)};$("bHint").onclick=function(){if(G)say("Albert says: "+G.L.hint)};
+cv.tabIndex=0;
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitCanvas);
+
+load(0);rooms();
+})();
+
+</script>
+</body>
+</html>
