@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#ffffff;--ink:#111111;--line:#111111;--faint:rgba(17,17,17,.14);--soft:#555555;--yellow:#ffe000;--red:#f26b5e;--grey:#cfd1d4;--brown:#c99a5b;color-scheme:light}
+:root{--bg:#ffffff;--ink:#111111;--line:#111111;--faint:rgba(17,17,17,.14);--soft:#555555;--yellow:#ffe000;--red:#f26b5e;--grey:#cfd1d4;--brown:#c99a5b;--cyan:#5cc8e6;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--ink:#f2f2f2;--line:#f2f2f2;--faint:rgba(242,242,242,.14);--soft:#b4b4b4;--grey:#6d7075;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#121212;--ink:#f2f2f2;--line:#f2f2f2;--faint:rgba(242,242,242,.14);--soft:#b4b4b4;--grey:#6d7075;color-scheme:dark}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -84,6 +84,14 @@ a.game:hover .play i{width:44px}
         <g class="s"><path d="M30 10 Q57 9 64 36 Q53 20 30 10 Z"/><path d="M47 22 L14 63"/></g>
       </svg>
       <div><h2>Deep Trouble</h2><p class="desc">Keep six trapped miners alive at −640 m using negative numbers, rounding and estimation.</p></div>
+      <span class="play">Play <i></i></span>
+    </a></li>
+    <li><a class="game" href="laser-line.html">
+      <svg class="icon" viewBox="0 0 72 72" role="img" aria-label="Laser line icon">
+        <path d="M14 62 L62 14" stroke="var(--cyan)" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+        <g class="s"><path d="M10 36H62M36 10V62"/><path d="M14 62 L62 14"/><circle cx="26" cy="50" r="3.2" style="fill:var(--bg)"/><circle cx="50" cy="26" r="3.2" style="fill:var(--bg)"/></g>
+      </svg>
+      <div><h2>Laser Line</h2><p class="desc">Read the coordinates, work out the equation of the line, and fire.</p></div>
       <span class="play">Play <i></i></span>
     </a></li>
   </ul>
